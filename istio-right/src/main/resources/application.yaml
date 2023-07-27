@@ -1,0 +1,6 @@
+ktor:
+    application:
+        modules:
+            - msa.mesh.ApplicationKt.module
+    deployment:
+        port: $PORT

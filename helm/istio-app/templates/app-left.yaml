@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-{{ .Release.Name }}-left
+  labels:
+    app: {{ .Release.Name }}-left
+    config: config-{{ .Release.Name }}-left
+data:
+  application_port: {{ .Values.settings.left.port | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-{{ .Release.Name }}-left
+  labels:
+    app: {{ .Release.Name }}-left
+    service: service-{{ .Release.Name }}-left
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.settings.left.port }}
+  selector:
+    app: {{ .Release.Name }}-left
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: account-{{ .Release.Name }}-left
+  labels:
+    account: account-{{ .Release.Name }}-left
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-{{ .Release.Name }}-left
+  labels:
+    app: {{ .Release.Name }}-left
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-left
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-left
+    spec:
+      serviceAccountName: account-{{ .Release.Name }}-left
+      containers:
+        - name: {{ .Values.settings.left.container.name }}
+          image: {{ .Values.settings.left.container.image }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: config-{{ .Release.Name }}-left
+                  key: application_port
+          ports:
+            - containerPort: {{ .Values.settings.left.port }}

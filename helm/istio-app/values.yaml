@@ -1,0 +1,13 @@
+settings:
+  left:
+    port: 8081
+    nodePort: 32761
+    container:
+      name: 'istio-app-left'
+      image: 'stanislavpoliakov/istio-app-left:1.0.0'
+  right:
+    port: 8082
+    nodePort: 32762
+    container:
+      name: 'istio-app-right'
+      image: 'stanislavpoliakov/istio-app-right:1.0.0'
